@@ -11,7 +11,7 @@ wamr_config_cmake_file=""
 # libc support, default builtin-libc
 LIBC_SUPPORT="BUILTIN"
 CM_DEXTRA_SDK_INCLUDE_PATH=""
-CM_BUILD_TYPE="-DCMAKE_BUILD_TYPE=Release"
+CM_BUILD_TYPE=${CM_BUILD_TYPE:-"-DCMAKE_BUILD_TYPE=Release"}
 CM_TOOLCHAIN=""
 
 # menuconfig will pass options to this script
@@ -118,26 +118,26 @@ fi
 # 4. Use the default config cmake file
 #
 if [[ -n "$wamr_config_cmake_file" ]]; then
-	if  [[ ! -f $wamr_config_cmake_file ]]; then
-	   echo "user given file not exist: ${wamr_config_cmake_file}"
-	   exit 1
-	fi
+        if  [[ ! -f $wamr_config_cmake_file ]]; then
+           echo "user given file not exist: ${wamr_config_cmake_file}"
+           exit 1
+        fi
 
-	echo "User config file: [${wamr_config_cmake_file}]"
+        echo "User config file: [${wamr_config_cmake_file}]"
 
 else
-	wamr_config_cmake_file=${out_dir}/wamr_config_${PROFILE}.cmake
+        wamr_config_cmake_file=${out_dir}/wamr_config_${PROFILE}.cmake
     # always rebuilt the sdk if user is not giving the config file
-	if [ -d ${curr_profile_dir} ]; then
-	   rm -rf ${curr_profile_dir}
-	fi
+        if [ -d ${curr_profile_dir} ]; then
+           rm -rf ${curr_profile_dir}
+        fi
 
-	if [[ "$MENUCONFIG" = "TRUE" ]] || [[ ! -f $wamr_config_cmake_file ]]; then
-		echo "MENUCONFIG: [${wamr_config_cmake_file}]"
-		./menuconfig.sh -x ${wamr_config_cmake_file}
-		[ $? -eq 0 ] || exit $?
-	else
-		echo "use existing config file: [$wamr_config_cmake_file]"
+        if [[ "$MENUCONFIG" = "TRUE" ]] || [[ ! -f $wamr_config_cmake_file ]]; then
+                echo "MENUCONFIG: [${wamr_config_cmake_file}]"
+                ./menuconfig.sh -x ${wamr_config_cmake_file}
+                [ $? -eq 0 ] || exit $?
+        else
+                echo "use existing config file: [$wamr_config_cmake_file]"
     fi
 fi
 
@@ -190,17 +190,18 @@ if [ -n "$out" ]; then
 fi
 if [ "${LIBC_SUPPORT}" = "WASI" ]; then
     echo "using wasi toolchain"
-    cmake .. $CM_DEXTRA_SDK_INCLUDE_PATH -DWAMR_BUILD_SDK_PROFILE=${PROFILE}  -DCONFIG_PATH=${wamr_config_cmake_file}  -DCMAKE_TOOLCHAIN_FILE=../wasi_toolchain.cmake
+    cmake .. $CM_DEXTRA_SDK_INCLUDE_PATH -DWAMR_BUILD_SDK_PROFILE=${PROFILE}  -DCONFIG_PATH=${wamr_config_cmake_file}  -DCMAKE_TOOLCHAIN_FILE=../wasi_toolchain.cmake -G Ninja
 else
     echo "using builtin libc toolchain"
     cmake .. $CM_DEXTRA_SDK_INCLUDE_PATH \
          -DWAMR_BUILD_SDK_PROFILE=${PROFILE} \
          -DCONFIG_PATH=${wamr_config_cmake_file} \
-         -DCMAKE_TOOLCHAIN_FILE=../wamr_toolchain.cmake
+         -DCMAKE_TOOLCHAIN_FILE=../wamr_toolchain.cmake -G Ninja
 fi
 [ $? -eq 0 ] || exit $?
 
-make
+ninja
+
 if (( $? == 0 )); then
     echo -e "\033[32mSuccessfully built app-sdk under ${curr_profile_dir}/app-sdk\033[0m"
 else
@@ -221,9 +222,9 @@ cd build_runtime_sdk
 cmake .. $CM_DEXTRA_SDK_INCLUDE_PATH \
        -DWAMR_BUILD_SDK_PROFILE=${PROFILE} \
        -DCONFIG_PATH=${wamr_config_cmake_file} \
-       $CM_TOOLCHAIN $CM_BUILD_TYPE
+       $CM_TOOLCHAIN $CM_BUILD_TYPE -G Ninja
 [ $? -eq 0 ] || exit $?
-make
+ninja
 
 if (( $? == 0 )); then
     echo -e "\033[32mSuccessfully built runtime library under ${curr_profile_dir}/runtime-sdk/lib\033[0m"

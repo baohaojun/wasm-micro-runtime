@@ -46,7 +46,7 @@ extern "C" {
 #endif
 
 /* Stack size of applet threads's native part.  */
-#define BH_APPLET_PRESERVED_STACK_SIZE (32 * 1024)
+#define BH_APPLET_PRESERVED_STACK_SIZE (128 * 1024)
 
 /* Default thread priority */
 #define BH_THREAD_DEFAULT_PRIORITY 0
@@ -92,4 +92,3 @@ void os_sigreturn();
 #endif
 
 #endif /* end of _PLATFORM_INTERNAL_H */
-

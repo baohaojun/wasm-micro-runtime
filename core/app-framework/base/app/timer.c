@@ -84,12 +84,16 @@ void on_timer_callback(int timer_id)
 {
     struct user_timer * t = g_timers;
 
+    static uint32 last_tick;
+
     while (t) {
         if (t->timer_id == timer_id) {
+            uint32 tick = wasm_get_sys_tick_ms();
+            printf("tick: %d\n", tick - last_tick);
+            last_tick = tick;
             t->user_timer_callback(t);
             break;
         }
         t = t->next;
     }
 }
-

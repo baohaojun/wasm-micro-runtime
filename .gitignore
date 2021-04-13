@@ -9,3 +9,4 @@ wamr-sdk/out/
 wamr-sdk/runtime/build_runtime_sdk/
 test-tools/host-tool/bin/
 product-mini/app-samples/hello-world/test.wasm
+wamr-compiler/out/

@@ -253,7 +253,7 @@
 /* Default/min/max stack size of each app thread */
 #if !defined(BH_PLATFORM_ZEPHYR) && !defined(BH_PLATFORM_ALIOS_THINGS) \
     && !defined(BH_PLATFORM_ESP_IDF) && !defined(BH_PLATFORM_OPENRTOS)
-#define APP_THREAD_STACK_SIZE_DEFAULT (32 * 1024)
+#define APP_THREAD_STACK_SIZE_DEFAULT (128 * 1024)
 #define APP_THREAD_STACK_SIZE_MIN (24 * 1024)
 #else
 #define APP_THREAD_STACK_SIZE_DEFAULT (6 * 1024)
@@ -290,4 +290,3 @@
 #endif
 
 #endif /* end of _CONFIG_H_ */
-
