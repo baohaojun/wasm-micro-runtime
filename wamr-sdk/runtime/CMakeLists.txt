@@ -4,8 +4,10 @@
 cmake_minimum_required(VERSION 2.8)
 project(runtime-sdk)
 
-SET (CMAKE_C_FLAGS          "-O3")
-set (CMAKE_BUILD_TYPE       Release)
+if (CMAKE_BUILD_TYPE STREQUAL "")
+  SET (CMAKE_C_FLAGS          "-O3")
+  SET (CMAKE_BUILD_TYPE       Release)
+endif()
 
 add_definitions(-DBH_MALLOC=wasm_runtime_malloc)
 add_definitions(-DBH_FREE=wasm_runtime_free)

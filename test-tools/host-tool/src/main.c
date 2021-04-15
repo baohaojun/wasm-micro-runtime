@@ -78,11 +78,14 @@ typedef union operation_info {
     req_info req;
     reg_info reg;
     unreg_info unreg;
+    int times;
 } operation_info;
 
 typedef struct {
     op_type type;
     operation_info info;
+    operation_info info_inst2;
+    operation_info info_times;
 } operation;
 
 typedef enum REPLY_PACKET_TYPE {
@@ -477,11 +480,14 @@ static bool parse_args(int argc, char *argv[], operation *op)
             { "udp",        required_argument, NULL, 'U' },
             { "action",     required_argument, NULL, 'A' },
             { "file",       required_argument, NULL, 'f' },
+            { "file2",       required_argument, NULL, 'F' },
             { "payload",    required_argument, NULL, 'p' },
             { "type",       required_argument, NULL, 0 },
             { "heap",       required_argument, NULL, 1 },
             { "timers",     required_argument, NULL, 2 },
             { "watchdog",   required_argument, NULL, 3 },
+            { "install2",   required_argument, NULL, 4 },
+            { "loop",       required_argument, NULL, 5 },
             { "address",    required_argument, NULL, 'S' },
             { "port",       required_argument, NULL, 'P' },
             { "uart_device",required_argument, NULL, 'D' },
@@ -490,12 +496,19 @@ static bool parse_args(int argc, char *argv[], operation *op)
             { 0, 0, 0, 0 }
         };
 
-        c = getopt_long(argc, argv, "i:u:q::r:s:d:t:a:o:U:A:f:p:S:P:D:B:h",
+        c = getopt_long(argc, argv, "i:u:q::r:s:d:t:a:o:U:A:f:F:p:S:P:D:B:h",
                         longOpts, &optIndex);
         if (c == -1)
             break;
 
         switch (c) {
+        case 4:
+            op->info_inst2.inst.name = optarg;
+            break;
+        case 5:
+            op->info_times.times = atoi(optarg);
+            operation_parsed = true;
+            break;
         case 'i':
             CHECK_DUPLICATE_OPERATION;
             op->type = INSTALL;
@@ -550,6 +563,10 @@ static bool parse_args(int argc, char *argv[], operation *op)
         case 'f':
             CHECK_ARGS_UNMATCH_OPERATION(INSTALL);
             op->info.inst.file = optarg;
+            break;
+        case 'F':
+            CHECK_ARGS_UNMATCH_OPERATION(INSTALL);
+            op->info_inst2.inst.file = optarg;
             break;
         case 'p':
             CHECK_ARGS_UNMATCH_OPERATION(REQUEST);
@@ -748,6 +765,65 @@ static void output_event(request_t *obj)
     output(header, obj->payload, obj->fmt, obj->payload_len);
 }
 
+int maybe_read_reply()
+{
+    if (g_conn_fd == -1) {
+        if (init() != 0) {
+            sleep(1);
+            exit(1);
+        }
+    }
+
+    fd_set readfds;
+    struct timeval tv;
+
+    FD_ZERO(&readfds);
+    FD_SET(g_conn_fd, &readfds);
+
+    tv.tv_sec = 0;
+    tv.tv_usec = 100;
+
+    int result = select(FD_SETSIZE, &readfds, NULL, NULL, &tv);
+
+    if (result < 0) {
+        if (errno != EINTR) {
+            printf("Error in select, errno: 0x%x\n", errno);
+            goto ret;
+        }
+    }
+    else if (result == 0) { /* select timeout */
+        return 0;
+    }
+    else if (result > 0) {
+        int n;
+        if (FD_ISSET(g_conn_fd, &readfds)) {
+            int reply_type = -1;
+
+            char buffer[BUF_SIZE] = { 0 };
+            n = read(g_conn_fd, buffer, BUF_SIZE);
+
+            if (n <= 0) {
+                exit(1);
+            }
+            return n;
+        }
+    }
+    return 0;
+
+ ret:
+    printf("error read_reply\n");
+    exit(1);
+}
+
+void read_reply() {
+    while (! maybe_read_reply()) {
+
+    }
+    while (maybe_read_reply()) {
+
+    }
+}
+
 int main(int argc, char *argv[])
 {
     int ret;
@@ -756,7 +832,7 @@ int main(int argc, char *argv[])
     uint32_t last_check = 0, total_elpased_ms = 0;
     bool is_responsed = false;
     operation op;
-
+    operation op2;
     memset(&op, 0, sizeof(op));
 
     if (!parse_args(argc, argv, &op))
@@ -769,6 +845,28 @@ int main(int argc, char *argv[])
     switch (op.type) {
     case INSTALL:
         ret = install((inst_info *) &op.info.inst);
+        if (op.info_times.times) {
+            for (int i = 0; i < op.info_times.times; i++) {
+                printf("loop: %d\n", i);
+                memset(&op2, 0, sizeof(op2));
+                op2.info.uinst.name = op.info.inst.name;
+                ret |= uninstall((uninst_info *) &op2.info.uinst);
+                read_reply();
+                ret |= install((inst_info *) &op.info_inst2.inst);
+                read_reply();
+                memset(&op2, 0, sizeof(op2));
+                op2.info.uinst.name = op.info_inst2.inst.name;
+                ret |= uninstall((uninst_info *) &op2.info.uinst);
+                read_reply();
+                ret |= install((inst_info *) &op.info.inst);
+                read_reply();
+                if (ret != 0) {
+                    printf("Error doing some installation?");
+                    exit(1);
+                }
+            }
+            exit(0);
+        }
         break;
     case UNINSTALL:
         ret = uninstall((uninst_info *) &op.info.uinst);

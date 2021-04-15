@@ -1286,6 +1286,9 @@ wasm_app_module_on_install_request_byte_arrive(uint8 ch,
                      * module_wasm_app_handle_install_msg(),
                      * no need to destroy again.
                      */
+                    APP_MGR_FREE(recv_ctx.message.request_url);
+                    recv_ctx.message.request_url = NULL;
+                    memset(&recv_ctx, 0, sizeof(recv_ctx));
                     return false;
                 }
             }
@@ -1683,4 +1686,3 @@ wasm_get_wasi_root_dir()
     return wasi_root_dir;
 }
 #endif
-

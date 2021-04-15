@@ -20,8 +20,8 @@ void on_init()
     user_timer_t timer;
 
     /* set up a timer */
-    timer = api_timer_create(10, true, false, timer1_update);
-    api_timer_restart(timer, 10);
+    timer = api_timer_create(1000, true, false, timer1_update);
+    api_timer_restart(timer, 1000);
 }
 
 void on_destroy()
