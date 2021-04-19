@@ -4,11 +4,12 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 DEPS_DIR=${PWD}/../core/deps
+gitlab_url=ssh://git@gitlab.chehejia.com/
 
 cd ${DEPS_DIR}
 if [ ! -d "llvm" ]; then
   echo "Clone llvm to core/deps/ .."
-  git clone --depth 1 --branch release/11.x https://github.com/llvm/llvm-project.git llvm
+  git clone --depth 1 --branch release/11.x ${gitlab_url}RTE/llvm.git llvm
 fi
 
 cd llvm
@@ -43,4 +44,3 @@ else
 fi
 
 cd ${PWD}
-
