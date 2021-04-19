@@ -35,6 +35,10 @@ include (${CJSON_DIR}/cjson.cmake)
 include (${SHARED_DIR}/coap/lib_coap.cmake)
 
 if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
+  SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
+  set(CMAKE_C_COMPILER i686-linux-gnu-gcc)
+  set(CMAKE_CXX_COMPILER i686-linux-gnu-g++)
 endif ()
 
 add_definitions(-Wall -Wno-pointer-sign)
