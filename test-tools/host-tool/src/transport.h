@@ -12,8 +12,8 @@ extern "C" {
 
 /* IMRT link message between host and WAMR */
 typedef struct {
-    unsigned short message_type;
-    unsigned long payload_size;
+    uint16_t message_type;
+    uint32_t payload_size;
     char *payload;
 } imrt_link_message_t;
 

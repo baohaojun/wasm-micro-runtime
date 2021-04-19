@@ -12,3 +12,4 @@ product-mini/app-samples/hello-world/test.wasm
 wamr-compiler/out/
 test-tools/component_test/run/
 test-tools/host-tool/out/
+test-tools/component_test/suites/01-life-cycle/test-app/*.wasm

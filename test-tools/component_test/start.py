@@ -98,6 +98,7 @@ if __name__ == "__main__":
     print "------------------------------------------------------------"
     print "preparing wamr binary and test tools ... ..."
     os.system("cd ../../samples/simple/ && bash build.sh -p host-interp")
+    os.system("cd suites/01-life-cycle/test-app/ && bash build.sh")
 
     Register_signal_handler()
 
@@ -147,5 +148,3 @@ if __name__ == "__main__":
 
     sys.exit(0)
     os._exit()
-
-
