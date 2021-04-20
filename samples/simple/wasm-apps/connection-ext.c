@@ -86,7 +86,7 @@ void on_init()
     api_register_resource_handler("/close", my_close_handler);
 
     args = attr_container_create("");
-    attr_container_set_string(&args, "address", "127.0.0.1");
+    attr_container_set_string(&args, "address", "172.16.0.1");
     attr_container_set_uint16(&args, "port", 7);
 
     for (int i = 0; i < 10000; i++) {
