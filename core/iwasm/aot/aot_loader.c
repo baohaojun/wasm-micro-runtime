@@ -2187,7 +2187,7 @@ create_sections(const uint8 *buf, uint32 size,
             section->section_body = (uint8*)p;
             section->section_body_size = section_size;
 
-            if (section_type == AOT_SECTION_TYPE_TEXT) {
+            if (section_type == AOT_SECTION_TYPE_TEXT){
                 if (section_size > 0) {
                     int map_prot = MMAP_PROT_READ | MMAP_PROT_WRITE
                                    | MMAP_PROT_EXEC;
@@ -2633,4 +2633,3 @@ aot_get_plt_table_size()
 {
     return get_plt_table_size();
 }
-

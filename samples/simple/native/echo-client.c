@@ -25,7 +25,7 @@ int main(int argc , char *argv[])
 {
     int sock;
     struct sockaddr_in server;
-    char message[1000] , server_reply[2000];
+    static char message[1025], server_reply[65536];
 
     //Create socket
     sock = socket(AF_INET , SOCK_STREAM , 0);
@@ -56,11 +56,15 @@ int main(int argc , char *argv[])
     puts("Connected\n");
 
     //keep communicating with server
+
+    for (int i = 0; i < sizeof(message) - 1; i++) {
+        message[i] = 'a' + i % 26;
+    }
+
     while(1)
     {
         memset(&server_reply, 0, sizeof(server_reply) );
         static int num;
-        snprintf(message, sizeof(message), "Hello %d", num++);
 
         static uint32_t start;
         if (! start) {
@@ -68,20 +72,21 @@ int main(int argc , char *argv[])
         }
 
         //Send some data
-        if( send(sock , message , strlen(message) , 0) < 0)
+        if( send(sock , message , sizeof(message) - 1, 0) < 0)
         {
             puts("Send failed");
             return 1;
         }
 
         //Receive a reply from the server
-        if( recv(sock , server_reply , 2000 , 0) < 0)
+        if( recv(sock , server_reply , 65536 , 0) < 0)
         {
             puts("recv failed");
             break;
         }
 
-        if (num % 10000 == 0) {
+        if (num++ % 10000 == 0) {
+            snprintf(server_reply + 20, 20, "... %d", num );
             printf("Server reply %ld/%d : %s\n", os_time_get_boot_microsecond()/1000 - start, num, server_reply);
         }
     }
