@@ -52,6 +52,8 @@ elseif (WAMR_BUILD_TARGET STREQUAL "MIPS")
   set (source_all ${c_source_all} ${IWASM_COMMON_DIR}/arch/invokeNative_mips.s)
 elseif (WAMR_BUILD_TARGET STREQUAL "XTENSA")
   set (source_all ${c_source_all} ${IWASM_COMMON_DIR}/arch/invokeNative_xtensa.s)
+elseif (WAMR_BUILD_TARGET STREQUAL "MPS2")
+  set (source_all ${c_source_all} ${IWASM_COMMON_DIR}/arch/invokeNative_mps2.s)
 elseif (WAMR_BUILD_TARGET STREQUAL "RISCV64" OR WAMR_BUILD_TARGET STREQUAL "RISCV64_LP64D")
   set (source_all ${c_source_all} ${IWASM_COMMON_DIR}/arch/invokeNative_riscv64_lp64d.s)
 elseif (WAMR_BUILD_TARGET STREQUAL "RISCV64_LP64")
@@ -73,4 +75,3 @@ else ()
 endif ()
 
 set (IWASM_COMMON_SOURCE ${source_all})
-

@@ -7,9 +7,9 @@
 #include "wasm_export.h"
 #include "test_wasm.h"
 
-#define CONFIG_GLOBAL_HEAP_BUF_SIZE 131072
+#define CONFIG_GLOBAL_HEAP_BUF_SIZE 8192
 #define CONFIG_APP_STACK_SIZE 8192
-#define CONFIG_APP_HEAP_SIZE 8192
+#define CONFIG_APP_HEAP_SIZE 1024
 
 static int app_argc;
 static char **app_argv;

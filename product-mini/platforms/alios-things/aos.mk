@@ -40,6 +40,10 @@ else ifeq (${WAMR_BUILD_TARGET}, XTENSA)
   GLOBAL_DEFINES += BUILD_TARGET_XTENSA
   INVOKE_NATIVE := invokeNative_xtensa.s
   AOT_RELOC := aot_reloc_xtensa.c
+else ifeq (${WAMR_BUILD_TARGET}, MPS2)
+  GLOBAL_DEFINES += BUILD_TARGET_MPS2
+  INVOKE_NATIVE := invokeNative_mps2.s
+  AOT_RELOC := aot_reloc_mps2.c
 else
   $(error Build target isn't set)
 endif
@@ -62,12 +66,12 @@ GLOBAL_DEFINES += WASM_ENABLE_LIBC_BUILTIN=1
 
 GLOBAL_INCLUDES += ${CORE_ROOT} \
 				   ${IWASM_ROOT}/include \
-                   ${IWASM_ROOT}/common \
-                   ${SHARED_ROOT}/include \
-                   ${SHARED_ROOT}/platform/include \
-                   ${SHARED_ROOT}/utils \
-                   ${SHARED_ROOT}/mem-alloc \
-                   ${SHARED_ROOT}/platform/alios
+		   ${IWASM_ROOT}/common \
+		   ${SHARED_ROOT}/include \
+		   ${SHARED_ROOT}/platform/include \
+		   ${SHARED_ROOT}/utils \
+		   ${SHARED_ROOT}/mem-alloc \
+		   ${SHARED_ROOT}/platform/alios
 
 ifeq (${WAMR_BUILD_INTERP}, 1)
 GLOBAL_INCLUDES += ${IWASM_ROOT}/interpreter
@@ -78,38 +82,37 @@ GLOBAL_INCLUDES += ${IWASM_ROOT}/aot
 endif
 
 $(NAME)_SOURCES := ${SHARED_ROOT}/platform/alios/alios_platform.c \
-                   ${SHARED_ROOT}/platform/alios/alios_thread.c \
-                   ${SHARED_ROOT}/platform/alios/alios_time.c \
-                   ${SHARED_ROOT}/platform/common/math/math.c \
-                   ${SHARED_ROOT}/mem-alloc/mem_alloc.c \
-                   ${SHARED_ROOT}/mem-alloc/ems/ems_kfc.c \
-                   ${SHARED_ROOT}/mem-alloc/ems/ems_alloc.c \
-                   ${SHARED_ROOT}/mem-alloc/ems/ems_hmu.c \
-                   ${SHARED_ROOT}/utils/bh_assert.c \
-                   ${SHARED_ROOT}/utils/bh_common.c \
-                   ${SHARED_ROOT}/utils/bh_hashmap.c \
-                   ${SHARED_ROOT}/utils/bh_list.c \
-                   ${SHARED_ROOT}/utils/bh_log.c \
-                   ${SHARED_ROOT}/utils/bh_queue.c \
-                   ${SHARED_ROOT}/utils/bh_vector.c \
-                   ${SHARED_ROOT}/utils/runtime_timer.c \
-                   ${IWASM_ROOT}/libraries/libc-builtin/libc_builtin_wrapper.c \
-                   ${IWASM_ROOT}/common/wasm_runtime_common.c \
-                   ${IWASM_ROOT}/common/wasm_native.c \
-                   ${IWASM_ROOT}/common/wasm_exec_env.c \
-                   ${IWASM_ROOT}/common/wasm_memory.c \
-                   ${IWASM_ROOT}/common/arch/${INVOKE_NATIVE} \
-                   src/main.c
+		   ${SHARED_ROOT}/platform/alios/alios_thread.c \
+		   ${SHARED_ROOT}/platform/alios/alios_time.c \
+		   ${SHARED_ROOT}/platform/common/math/math.c \
+		   ${SHARED_ROOT}/mem-alloc/mem_alloc.c \
+		   ${SHARED_ROOT}/mem-alloc/ems/ems_kfc.c \
+		   ${SHARED_ROOT}/mem-alloc/ems/ems_alloc.c \
+		   ${SHARED_ROOT}/mem-alloc/ems/ems_hmu.c \
+		   ${SHARED_ROOT}/utils/bh_assert.c \
+		   ${SHARED_ROOT}/utils/bh_common.c \
+		   ${SHARED_ROOT}/utils/bh_hashmap.c \
+		   ${SHARED_ROOT}/utils/bh_list.c \
+		   ${SHARED_ROOT}/utils/bh_log.c \
+		   ${SHARED_ROOT}/utils/bh_queue.c \
+		   ${SHARED_ROOT}/utils/bh_vector.c \
+		   ${SHARED_ROOT}/utils/runtime_timer.c \
+		   ${IWASM_ROOT}/libraries/libc-builtin/libc_builtin_wrapper.c \
+		   ${IWASM_ROOT}/common/wasm_runtime_common.c \
+		   ${IWASM_ROOT}/common/wasm_native.c \
+		   ${IWASM_ROOT}/common/wasm_exec_env.c \
+		   ${IWASM_ROOT}/common/wasm_memory.c \
+		   ${IWASM_ROOT}/common/arch/${INVOKE_NATIVE} \
+		   src/main.c
 
 ifeq (${WAMR_BUILD_INTERP}, 1)
 $(NAME)_SOURCES += ${IWASM_ROOT}/interpreter/wasm_interp_classic.c \
-                   ${IWASM_ROOT}/interpreter/wasm_loader.c \
-                   ${IWASM_ROOT}/interpreter/wasm_runtime.c
+		   ${IWASM_ROOT}/interpreter/wasm_loader.c \
+		   ${IWASM_ROOT}/interpreter/wasm_runtime.c
 endif
 
 ifeq (${WAMR_BUILD_AOT}, 1)
 $(NAME)_SOURCES += ${IWASM_ROOT}/aot/aot_loader.c \
-                   ${IWASM_ROOT}/aot/arch/${AOT_RELOC} \
-                   ${IWASM_ROOT}/aot/aot_runtime.c
+		   ${IWASM_ROOT}/aot/arch/${AOT_RELOC} \
+		   ${IWASM_ROOT}/aot/aot_runtime.c
 endif
-

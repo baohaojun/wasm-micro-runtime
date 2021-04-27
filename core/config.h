@@ -16,6 +16,7 @@
     && !defined(BUILD_TARGET_THUMB_VFP) \
     && !defined(BUILD_TARGET_MIPS) \
     && !defined(BUILD_TARGET_XTENSA) \
+    && !defined(BUILD_TARGET_MPS2) \
     && !defined(BUILD_TARGET_RISCV64_LP64D) \
     && !defined(BUILD_TARGET_RISCV64_LP64) \
     && !defined(BUILD_TARGET_RISCV32_ILP32D) \
@@ -38,6 +39,8 @@
 #define BUILD_TARGET_MIPS
 #elif defined(__XTENSA__)
 #define BUILD_TARGET_XTENSA
+#elif defined(__MPS2__)
+#define BUILD_TARGET_MPS2
 #elif defined(__riscv) && (__riscv_xlen == 64)
 #define BUILD_TARGET_RISCV64_LP64D
 #elif defined(__riscv) && (__riscv_xlen == 32)

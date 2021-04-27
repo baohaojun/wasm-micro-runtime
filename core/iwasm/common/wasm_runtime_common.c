@@ -3412,7 +3412,8 @@ fail:
     || defined(BUILD_TARGET_ARM) \
     || defined(BUILD_TARGET_THUMB) \
     || defined(BUILD_TARGET_MIPS) \
-    || defined(BUILD_TARGET_XTENSA)
+    || defined(BUILD_TARGET_XTENSA) \
+    || defined(BUILD_TARGET_MPS2)
 typedef void (*GenericFunctionPointer)();
 int64 invokeNative(GenericFunctionPointer f, uint32 *args, uint32 sz);
 
@@ -4320,4 +4321,3 @@ wasm_runtime_dump_call_stack(WASMExecEnv *exec_env)
 #endif
 }
 #endif /* end of WASM_ENABLE_DUMP_CALL_STACK */
-

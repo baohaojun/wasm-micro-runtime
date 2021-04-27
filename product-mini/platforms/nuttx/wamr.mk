@@ -60,6 +60,11 @@ else ifeq (${WAMR_BUILD_TARGET}, XTENSA)
   CFLAGS += -DBUILD_TARGET_XTENSA
   INVOKE_NATIVE := invokeNative_xtensa.s
   AOT_RELOC := aot_reloc_xtensa.c
+else ifeq (${WAMR_BUILD_TARGET}, MPS2)
+  CFLAGS += -DBUILD_TARGET_MPS2
+  INVOKE_NATIVE := invokeNative_mps2.s
+  AOT_RELOC := aot_reloc_mps2.c
+
 else
   $(error Build target don't support)
 endif
@@ -74,8 +79,8 @@ ifeq (${CONFIG_INTERPRETERS_WAMR_AOT},y)
 CFLAGS += -I${IWASM_ROOT}/aot
 CFLAGS += -DWASM_ENABLE_AOT=1
 CSRCS += aot_loader.c \
-         ${AOT_RELOC} \
-         aot_runtime.c
+	 ${AOT_RELOC} \
+	 aot_runtime.c
 else
 CFLAGS += -DWASM_ENABLE_AOT=0
 endif
@@ -149,14 +154,14 @@ CFLAGS += -Wno-int-conversion -Wno-implicit-function-declaration
 
 CFLAGS += -I${CORE_ROOT} \
 		      -I${IWASM_ROOT}/include \
-          -I${IWASM_ROOT}/common \
-          -I${IWASM_ROOT}/libraries/thread-mgr \
-          -I${SHARED_ROOT}/include \
-          -I${SHARED_ROOT}/platform/include \
-          -I${SHARED_ROOT}/utils \
-          -I${SHARED_ROOT}/utils/uncommon \
-          -I${SHARED_ROOT}/mem-alloc \
-          -I${SHARED_ROOT}/platform/nuttx
+	  -I${IWASM_ROOT}/common \
+	  -I${IWASM_ROOT}/libraries/thread-mgr \
+	  -I${SHARED_ROOT}/include \
+	  -I${SHARED_ROOT}/platform/include \
+	  -I${SHARED_ROOT}/utils \
+	  -I${SHARED_ROOT}/utils/uncommon \
+	  -I${SHARED_ROOT}/mem-alloc \
+	  -I${SHARED_ROOT}/platform/nuttx
 
 
 ifeq (${WAMR_BUILD_INTERP}, 1)
@@ -164,26 +169,26 @@ CFLAGS += -I${IWASM_ROOT}/interpreter
 endif
 
 CSRCS += nuttx_platform.c \
-         posix_thread.c \
-         posix_time.c \
-         mem_alloc.c \
-         ems_kfc.c \
-         ems_alloc.c \
-         ems_hmu.c \
-         bh_assert.c \
-         bh_common.c \
-         bh_hashmap.c \
-         bh_list.c \
-         bh_log.c \
-         bh_queue.c \
-         bh_vector.c \
-         bh_read_file.c \
-         runtime_timer.c \
-         libc_builtin_wrapper.c \
-         wasm_runtime_common.c \
-         wasm_native.c \
-         wasm_exec_env.c \
-         wasm_memory.c
+	 posix_thread.c \
+	 posix_time.c \
+	 mem_alloc.c \
+	 ems_kfc.c \
+	 ems_alloc.c \
+	 ems_hmu.c \
+	 bh_assert.c \
+	 bh_common.c \
+	 bh_hashmap.c \
+	 bh_list.c \
+	 bh_log.c \
+	 bh_queue.c \
+	 bh_vector.c \
+	 bh_read_file.c \
+	 runtime_timer.c \
+	 libc_builtin_wrapper.c \
+	 wasm_runtime_common.c \
+	 wasm_native.c \
+	 wasm_exec_env.c \
+	 wasm_memory.c
 
 ASRCS += ${INVOKE_NATIVE}
 
